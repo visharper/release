@@ -14,7 +14,6 @@ from .views import (
 urlpatterns = [
     path("", MaukaListApiView.as_view()),
     path("user/", userApi),
-    # path("user/(?P<username>.+)/$", userDetail),
     path("signal/", signalDetail),
     path("test/", SignalListApiView.as_view()),
     path("backtest/", backtestApi),
