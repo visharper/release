@@ -1,0 +1,38 @@
+SELECT create_date,
+       ticker,
+       category,
+       message,
+       message_type,
+       time_range
+  FROM mauka_api_signal
+  order by create_date desc;        
+  
+
+delete from mauka_api_signal where create_date > '2023-11-04';
+  
+select date(create_date), ticker, message, time_range, min(create_date)
+from mauka_api_signal
+--where ticker = 'NVDA'
+group by date(create_date), ticker, message, time_range
+order by create_date desc;
+
+
+select date(create_date), ticker, message, time_range, max(create_date)
+from mauka_api_signal
+--where ticker = 'NVDA'
+where message = 'Buy'
+group by date(create_date), ticker, message, time_range
+order by create_date desc;
+
+select ticker, message, time_range, max(create_date)
+from mauka_api_signal
+--where ticker = 'NVDA'
+where message = 'Buy'
+group by ticker, message, time_range
+order by create_date desc;
+
+--- Last Known Trend
+select ticker, time_range, message
+from mauka_api_signal ms1, (select max(create_date) LastUpdate from mauka_api_signal where ticker = "SOFI") ms2
+where ticker = "SOFI"
+and ms1.create_date = LastUpdate

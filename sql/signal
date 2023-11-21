@@ -1,0 +1,52 @@
+SELECT create_date,
+       ticker,
+       category,
+       message,
+       message_type,
+       time_range
+  FROM mauka_api_signal
+  order by create_date desc;
+  
+
+--delete from mauka_api_signal where ticker = 'vis'
+insert into mauka_api_trend (ticker, daily, daily_update_dt) 
+select ticker, message_type as daily , max(create_date) as daily_update_dt
+from mauka_api_signal
+where time_range = "1wk"
+group by ticker, message_type
+having count(ticker) = 1;
+
+
+update mauka_api_trend set weekly='Bullish', weekly_update_dt ='2023-10-28 00:15:20.274517' where ticker = 'AMT' and weekly is not 'Bullish';
+select * from mauka_api_trend
+
+
+--UPSERT INTO mauka_api_trend (ticker, weekly, weekly_update_dt) VALUES ("WMT","Bullish","");
+INSERT INTO phonebook(name,phonenumber) VALUES('Alice','704-555-1212')
+  ON CONFLICT(name) DO UPDATE SET phonenumber=excluded.phonenumber;
+  
+delete from mauka_api_trend;
+
+insert into mauka_api_trend (ticker, weekly, weekly_update_dt) 
+select ticker, message_type as weekly , max(create_date) as weekly_update_dt
+from mauka_api_signal
+where time_range = "1wk"
+group by ticker, message_type
+ON CONFLICT(ticker) DO UPDATE SET weekly=weekly, weekly_update_dt=weekly_update_dt where weekly is not weekly
+;
+
+
+insert into mauka_api_trend (ticker, daily, daily_update_dt) 
+select ticker, message_type as daily , max(create_date) as daily_update_dt
+from mauka_api_signal
+where time_range = "1wk"
+group by ticker, message_type
+ON CONFLICT(ticker) DO UPDATE SET daily=daily, daily_update_dt=daily_update_dt where daily is not daily
+;
+
+
+Select * from mauka_api_trend;
+
+delete from mauka_api_trend;
+
+update mauka_api_trend set daily="Bearish" where daily="BEARISH"
